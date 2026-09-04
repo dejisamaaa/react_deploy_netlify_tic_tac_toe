@@ -9,7 +9,7 @@ const Button = ({ items, player, idx, setPlayerPicks, computer, computerPicks, s
                 setComAval(true);
             } 
         }, 600)
-    }, [computerPicks]);
+    }, [computerPicks, items]);
      
     const handleBtn = (id) => {
         if (player && id) {
