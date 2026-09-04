@@ -61,7 +61,7 @@ const Main = () => {
         }
       }
     }
-  }, [player, computer, playerPicks]);
+  }, [player, computer, playerPicks, index]);
 
   return (
     <main className="main">
