@@ -1,20 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
-import Button from './Button'; 
+import Confetti from 'react-confetti';
+import { useWindowSize } from 'react-use';
+
 const Main = () => {
-  const ref = useRef([]);
-  const logicRef = useRef([])
-  const comLogicRef = useRef([])
-   const winRef = useRef([[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7], [2, 5, 8], [3, 6, 9], [1, 5, 9], [3, 5, 7]]);
-  const arrRef = useRef([[1, ''], [2, ''], [3, ''], [4, ''], [5, ''], [6, ''], [7, ''],
-   [8, ''], [9, '']]);
+  const { width, height } = useWindowSize();
+  const WINNING_COMBOS = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+    [0, 4, 8], [2, 4, 6]             
+  ];
+
+  const [board, setBoard] = useState(Array(9).fill(''));
+  const [isAiTurn, setIsAiTurn] = useState(false);
   const [player, setPlayer] = useState('');
   const [computer, setComputer] = useState('');
-  const [playerPicks, setPlayerPicks] = useState('');
-  const [computerPicks, setComputerPicks] = useState('');
-  const [index, setIndex] = useState('');
-  const [winner, setWinner] = useState('')
-  const btn = [[1, ''], [2, ''], [3, ''], [4, ''], [5, ''], [6, ''], [7, ''], [8, ''],
-    [9, '']];
 
   const handleX = () => {
     setPlayer('X');
@@ -26,70 +25,132 @@ const Main = () => {
     setComputer('X');
   }
 
-  useEffect(() => {
-    if (player && computer) {
-      if (playerPicks) {
-        logicRef.current.push(index);
-        ref.current.push(playerPicks);
-        if (logicRef.current.length) {
-          const result = winRef.current.filter(val => val.every(item => logicRef.current.includes(item)));
-          if (result[0]) {
-            console.log(result, 'Player Wins');
-            setWinner("Player Wins 🏆")
-          } else if (logicRef.current.length > 4 && !result[0]) {
-            console.log('Tie Game');
-            setWinner("Tie Game ⚖️")
-          } 
+  const checkWinner = (squares) => {
+      for (let combo of WINNING_COMBOS) {
+        const [a, b, c] = combo;
+        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+          return squares[a];
         }
-        arrRef.current = arrRef.current.filter((item) => !ref.current.includes(item[0]))
-        if (arrRef.current.length) {
-          const randNum = Math.floor(Math.random() * arrRef.current.length);
-          const val = arrRef.current[randNum];
-          arrRef.current = arrRef.current.filter(item => item !== val)
-          comLogicRef.current.push(val[0]);
-          console.log(comLogicRef.current);
-          setComputerPicks(val);
-          if (comLogicRef.current.length) {
-            const result = winRef.current.filter(val => val.every(item => comLogicRef.current.includes(item)));
-            if (result[0]) {
-              console.log(result, 'Computer Wins');
-              setWinner("Computer Wins 🤖")
-            }
-          }
-        } else if (arrRef.current.length < 2) {
-          setComputerPicks('');
+      }
+      if (squares.every(square => square !== '')) return 'tie';
+      return '';
+    };
+
+  const minimax = (squares, depth, isMaximizing) => {
+    const winner = checkWinner(squares);
+    
+    console.log(winner)
+    if (winner === computer) return 10 - depth;
+    if (winner === player) return depth - 10; 
+    if (winner === 'tie') return 0;
+
+    if (isMaximizing) {
+      let bestScore = -Infinity;
+      for (let i = 0; i < squares.length; i++) {
+        if (squares[i] === '') {
+          squares[i] = computer; 
+          let score = minimax(squares, depth + 1, false);
+          squares[i] = '';
+          bestScore = Math.max(score, bestScore);
+        }
+      }
+      return bestScore;
+    } else {
+      let bestScore = Infinity;
+      for (let i = 0; i < squares.length; i++) {
+        if (squares[i] === '') {
+          squares[i] = player; 
+          let score = minimax(squares, depth + 1, true);
+          squares[i] = '';
+          bestScore = Math.min(score, bestScore);
+        }
+      }
+      return bestScore;
+    }
+  };
+
+  const findBestMove = (squares) => {
+    let bestScore = -Infinity;
+    let move = -1;
+
+    for (let i = 0; i < squares.length; i++) {
+      if (squares[i] === '') {
+        squares[i] = computer;
+        let score = minimax(squares, 0, false);
+        squares[i] = '';
+
+        if (score > bestScore) {
+          bestScore = score;
+          move = i;
         }
       }
     }
-  }, [player, computer, playerPicks]);
+    return move;
+  };
+
+  useEffect(() => {
+    if (!isAiTurn) return;
+
+    const winner = checkWinner(board);
+    if (winner) return;
+
+    const timer = setTimeout(() => {
+      const bestMove = findBestMove([...board]);
+      if (bestMove !== -1) {
+        const newBoard = [...board];
+        newBoard[bestMove] = computer;
+        setBoard(newBoard);
+        setIsAiTurn(false);
+      }
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, [isAiTurn, board]);
+
+  const handleClick = (index) => {
+    if (board[index] || checkWinner(board) || isAiTurn) return;
+
+    const newBoard = [...board];
+    newBoard[index] = player;
+    setBoard(newBoard);
+    setIsAiTurn(true);
+  };
+
+  const winner = checkWinner(board);
+
+  console.log(board)
 
   return (
     <main className="main">
-        {
-          !player ? <p className="main_p">
-          Select between 
-          <span className="main_p_btn"  onClick={handleX}>X</span>
-           or  
-          <span className="main_p_btn" onClick={handleO}>O</span>to start game
-          </p> : winner ? <p className="main_p">Result: {winner}</p> : <p className='main_p'>{`Player is ${player} Computer is ${computer}`}</p> 
+         {
+          !player 
+          ?  <p className="main_p">
+              Select between 
+              <span className="main_p_btn"  onClick={handleX}>X</span>
+              or  
+              <span className="main_p_btn" onClick={handleO}>O</span>
+              to start game
+            </p> 
+          : winner ? 
+          <div className="main_p">
+            <Confetti width={width} height={height} numberOfPieces={200} recycle={true} /> 
+            <p >{winner === "tie" ? "Tie Game" : `Winner is ${winner}`}</p>
+          </div> 
+          : <p className='main_p'>{`Player is ${player} Computer is ${computer}`}</p> 
         } 
-        <section className="main_sec">
-          <ul className='main_sec_ul'>
-            {btn.map((item, idx) => (<Button 
-              key={item[0]}
-              items={item} 
-              idx={idx + 1}
-              playerPicks={playerPicks}
-              setPlayerPicks={setPlayerPicks}
-              player={player}
-              computer={computer}
-              computerPicks={computerPicks}
-              setComputerPicks={setComputerPicks}
-              setIndex={setIndex}
-            />))}
-          </ul>
-        </section>
-        <button className="main_reset" onClick={() => window.location.reload()}>Play Again</button>
+         <div className="main_sec_div">
+         {board.map((value, idx) => (
+          <button
+            className="main_btn"
+            key={idx}
+            onClick={() => handleClick(idx)}
+           
+          >
+            {value}
+          </button>
+        ))}
+      </div>
+      <button className="main_reset" onClick={() => window.location.reload()}>Play Again</button> 
     </main>
   )
 }
