@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 
@@ -14,8 +14,6 @@ const Main = () => {
   const [isAiTurn, setIsAiTurn] = useState(false);
   const [player, setPlayer] = useState('');
   const [computer, setComputer] = useState('');
-  
-
 
   const handleX = () => {
     setPlayer('X');
@@ -27,7 +25,7 @@ const Main = () => {
     setComputer('X');
   }
 
-  const checkWinner = useCallback((squares) => {
+  const checkWinner = (squares) => {
       for (let combo of WINNING_COMBOS) {
         const [a, b, c] = combo;
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
@@ -36,7 +34,7 @@ const Main = () => {
       }
       if (squares.every(square => square !== '')) return 'tie';
       return '';
-    }, [WINNING_COMBOS])
+    };
 
   const minimax = (squares, depth, isMaximizing) => {
     const winner = checkWinner(squares);
@@ -71,7 +69,7 @@ const Main = () => {
     }
   };
 
-  const findBestMove = useCallback((squares) => {
+  const findBestMove = (squares) => {
     let bestScore = -Infinity;
     let move = -1;
 
@@ -88,16 +86,16 @@ const Main = () => {
       }
     }
     return move;
-  }, [computer, minimax])
+  };
 
   useEffect(() => {
     if (!isAiTurn) return;
 
-    const winner = checkWinner(board)
+    const winner = checkWinner(board);
     if (winner) return;
 
     const timer = setTimeout(() => {
-      const bestMove = findBestMove([...board])
+      const bestMove = findBestMove([...board]);
       if (bestMove !== -1) {
         const newBoard = [...board];
         newBoard[bestMove] = computer;
@@ -107,7 +105,7 @@ const Main = () => {
     }, 600);
 
     return () => clearTimeout(timer);
-  }, [isAiTurn, board, checkWinner, computer, findBestMove]);
+  }, [isAiTurn, board]);
 
   const handleClick = (index) => {
     if (board[index] || checkWinner(board) || isAiTurn) return;
