@@ -105,7 +105,7 @@ const Main = () => {
     }, 600);
 
     return () => clearTimeout(timer);
-  }, [isAiTurn, board]);
+  }, [isAiTurn, board, checkWinner, computer, findBestMove]);
 
   const handleClick = (index) => {
     if (board[index] || checkWinner(board) || isAiTurn) return;
