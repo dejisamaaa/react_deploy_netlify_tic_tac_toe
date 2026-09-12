@@ -15,7 +15,7 @@ const Main = () => {
   const [player, setPlayer] = useState('');
   const [computer, setComputer] = useState('');
   
- );
+
 
   const handleX = () => {
     setPlayer('X');
