@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 
@@ -91,11 +91,11 @@ const Main = () => {
   useEffect(() => {
     if (!isAiTurn) return;
 
-    const winner = checkWinner(board);
+    const winner = useCallback(() => checkWinner(board), [checkWinner]);
     if (winner) return;
 
     const timer = setTimeout(() => {
-      const bestMove = findBestMove([...board]);
+      const bestMove = useCallback(() => findBestMove([...board]), [findBestMove]);
       if (bestMove !== -1) {
         const newBoard = [...board];
         newBoard[bestMove] = computer;
