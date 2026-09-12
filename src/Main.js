@@ -36,7 +36,7 @@ const Main = () => {
       }
       if (squares.every(square => square !== '')) return 'tie';
       return '';
-    }, [])
+    }, [WINNING_COMBOS])
 
   const minimax = (squares, depth, isMaximizing) => {
     const winner = checkWinner(squares);
@@ -88,7 +88,7 @@ const Main = () => {
       }
     }
     return move;
-  }, [])
+  }, [computer, minimax])
 
   useEffect(() => {
     if (!isAiTurn) return;
