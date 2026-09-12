@@ -91,11 +91,11 @@ const Main = () => {
   useEffect(() => {
     if (!isAiTurn) return;
 
-    const winner = useCallback(() => checkWinner(board), [checkWinner]);
+    const winner = useCallback(checkWinner(board), [checkWinner]);
     if (winner) return;
 
     const timer = setTimeout(() => {
-      const bestMove = useCallback(() => findBestMove([...board]), [findBestMove]);
+      const bestMove = useCallback(findBestMove([...board]), [findBestMove]);
       if (bestMove !== -1) {
         const newBoard = [...board];
         newBoard[bestMove] = computer;
