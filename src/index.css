@@ -44,6 +44,7 @@ body {
 
 .main_p {
   font-style: italic;
+  font-size: 0.55rem;
   text-align: center;
   padding: 0.15rem;
 }
