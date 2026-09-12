@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/react_deploy_netlify_tic_tac_toe/static/css/main.f8783b3e.css",
+    "main.css": "/react_deploy_netlify_tic_tac_toe/static/css/main.ca77b54a.css",
     "main.js": "/react_deploy_netlify_tic_tac_toe/static/js/main.b89e42d9.js",
     "index.html": "/react_deploy_netlify_tic_tac_toe/index.html",
-    "main.f8783b3e.css.map": "/react_deploy_netlify_tic_tac_toe/static/css/main.f8783b3e.css.map",
+    "main.ca77b54a.css.map": "/react_deploy_netlify_tic_tac_toe/static/css/main.ca77b54a.css.map",
     "main.b89e42d9.js.map": "/react_deploy_netlify_tic_tac_toe/static/js/main.b89e42d9.js.map"
   },
   "entrypoints": [
-    "static/css/main.f8783b3e.css",
+    "static/css/main.ca77b54a.css",
     "static/js/main.b89e42d9.js"
   ]
 }
