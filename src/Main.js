@@ -118,9 +118,9 @@ const Main = () => {
     setIsAiTurn(true);
   };
 
-  const winner = checkWinner(board);
+  // const winner = checkWinner(board);
 
-  console.log(board)
+  // console.log(board)
 
   return (
     <main className="main">
