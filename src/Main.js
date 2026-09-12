@@ -14,8 +14,8 @@ const Main = () => {
   const [isAiTurn, setIsAiTurn] = useState(false);
   const [player, setPlayer] = useState('');
   const [computer, setComputer] = useState('');
-  const winner = useCallback(checkWinner(board), [checkWinner]);
-  const bestMove = useCallback(findBestMove([...board]), [findBestMove]);
+  
+ );
 
   const handleX = () => {
     setPlayer('X');
@@ -27,7 +27,7 @@ const Main = () => {
     setComputer('X');
   }
 
-  const checkWinner = (squares) => {
+  const checkWinner = useCallback((squares) => {
       for (let combo of WINNING_COMBOS) {
         const [a, b, c] = combo;
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
@@ -36,7 +36,7 @@ const Main = () => {
       }
       if (squares.every(square => square !== '')) return 'tie';
       return '';
-    };
+    }, [])
 
   const minimax = (squares, depth, isMaximizing) => {
     const winner = checkWinner(squares);
@@ -71,7 +71,7 @@ const Main = () => {
     }
   };
 
-  const findBestMove = (squares) => {
+  const findBestMove = useCallback((squares) => {
     let bestScore = -Infinity;
     let move = -1;
 
@@ -88,16 +88,16 @@ const Main = () => {
       }
     }
     return move;
-  };
+  }, [])
 
   useEffect(() => {
     if (!isAiTurn) return;
 
-    
+    const winner = checkWinner(board)
     if (winner) return;
 
     const timer = setTimeout(() => {
-      
+      const bestMove = findBestMove([...board])
       if (bestMove !== -1) {
         const newBoard = [...board];
         newBoard[bestMove] = computer;
@@ -118,9 +118,9 @@ const Main = () => {
     setIsAiTurn(true);
   };
 
-  // const winner = checkWinner(board);
+  const winner = checkWinner(board);
 
-  // console.log(board)
+  console.log(board)
 
   return (
     <main className="main">
