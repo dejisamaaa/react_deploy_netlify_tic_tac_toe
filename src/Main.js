@@ -14,6 +14,8 @@ const Main = () => {
   const [isAiTurn, setIsAiTurn] = useState(false);
   const [player, setPlayer] = useState('');
   const [computer, setComputer] = useState('');
+  const winner = useCallback(checkWinner(board), [checkWinner]);
+  const bestMove = useCallback(findBestMove([...board]), [findBestMove]);
 
   const handleX = () => {
     setPlayer('X');
@@ -91,11 +93,11 @@ const Main = () => {
   useEffect(() => {
     if (!isAiTurn) return;
 
-    const winner = useCallback(checkWinner(board), [checkWinner]);
+    
     if (winner) return;
 
     const timer = setTimeout(() => {
-      const bestMove = useCallback(findBestMove([...board]), [findBestMove]);
+      
       if (bestMove !== -1) {
         const newBoard = [...board];
         newBoard[bestMove] = computer;
